@@ -3,7 +3,7 @@ import { NEW_QUESTION, SELECTED_QUESTIONS } from '../data/siteData'
 
 export default function QuestionsSection() {
   return (
-    <section className="py-[22px] px-7" aria-label="سوالات">
+    <section className="py-[22px] px-4 md:px-7" aria-label="سوالات">
       <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-2 border border-[#D9D9D9]">
 
         {/* RIGHT col — New question */}

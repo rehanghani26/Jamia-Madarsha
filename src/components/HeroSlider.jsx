@@ -29,7 +29,7 @@ function SlideSeal() {
         <line x1="190" y1="200" x2="180" y2="190"/>
       </g>
       <text x="110" y="160" textAnchor="middle" fontSize="10" fill="rgba(255,255,255,0.65)" fontFamily="serif">جامعة العلوم الإسلامية</text>
-      <text x="110" y="175" textAnchor="middle" fontSize="8"  fill="rgba(255,255,255,0.5)"  fontFamily="serif">علامہ بنوری ٹاؤن کراچی</text>
+      <text x="110" y="175" textAnchor="middle" fontSize="8"  fill="rgba(255,255,255,0.5)"  fontFamily="serif">علامہ بنوری ٹاؤن گیا بہار انڈیا</text>
     </svg>
   )
 }
@@ -146,7 +146,7 @@ function Slide2() {
 
 const SLIDES = [
   { id: 1, title: 'جامعة العلوم الإسلامية',    Scene: Slide1 },
-  { id: 2, title: 'علامہ بنوری ٹاؤن کراچی',   Scene: Slide2 },
+  { id: 2, title: 'علامہ بنوری ٹاؤن گیا انڈیا',   Scene: Slide2 },
 ]
 
 export default function HeroSlider() {
@@ -163,7 +163,7 @@ export default function HeroSlider() {
   }, [current, goSlide])
 
   return (
-    <section className="relative w-full h-[420px] overflow-hidden bg-[#7a4830]" aria-label="ہیرو سلائیڈر">
+    <section className="relative w-full h-[280px] sm:h-[420px] overflow-hidden bg-[#7a4830]" aria-label="ہیرو سلائیڈر">
       <div className="relative w-full h-full">
         {SLIDES.map(({ id, title, Scene }, idx) => (
           <div key={id} className={`slide${current === idx ? ' active' : ''}`}>
@@ -174,11 +174,11 @@ export default function HeroSlider() {
             {/* Brown tint overlay */}
             <div className="absolute inset-0 bg-[rgba(100,50,15,0.50)] z-[2]"/>
             {/* Watermark seal */}
-            <div className="absolute top-1/2 right-1/2 translate-x-1/2 -translate-y-[52%] w-[240px] h-[240px] z-[3] opacity-65">
+            <div className="absolute top-1/2 right-1/2 translate-x-1/2 -translate-y-[52%] w-[160px] h-[160px] sm:w-[240px] sm:h-[240px] z-[3] opacity-65">
               <SlideSeal />
             </div>
             {/* Slide title */}
-            <div className="absolute bottom-14 right-20 z-[4] text-[38px] text-white/90 drop-shadow-[0_2px_12px_rgba(0,0,0,0.7)]" style={{fontFamily:"'Noto Nastaliq Urdu',serif"}}>
+            <div className="absolute bottom-10 sm:bottom-14 right-4 left-4 sm:left-auto sm:right-20 z-[4] text-[24px] sm:text-[38px] text-white/90 text-center sm:text-right drop-shadow-[0_2px_12px_rgba(0,0,0,0.7)]" style={{fontFamily:"'Noto Nastaliq Urdu',serif"}}>
               {title}
             </div>
           </div>
@@ -191,7 +191,7 @@ export default function HeroSlider() {
               key={s.id}
               onClick={() => goSlide(idx)}
               aria-label={`سلائیڈ ${idx + 1}`}
-              className={`w-3.5 h-3.5 rounded-full border-2 border-white/70 transition-colors p-0 ${current === idx ? 'bg-white/95' : 'bg-white/38'}`}
+              className={`w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full border-2 border-white/70 transition-colors p-0 ${current === idx ? 'bg-white/95' : 'bg-white/38'}`}
             />
           ))}
         </div>

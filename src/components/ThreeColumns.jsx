@@ -83,7 +83,7 @@ function BooksCol() {
 
 export default function ThreeColumns() {
   return (
-    <section className="px-7 pb-7" aria-label="مقالات، نماز کے اوقات، کتابیں">
+    <section className="px-4 pb-4 md:px-7 md:pb-7" aria-label="مقالات، نماز کے اوقات، کتابیں">
       <div className="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-3 border border-[#D9D9D9] border-t-0">
         <ArticlesCol />
         <PrayerCol />

@@ -4,7 +4,7 @@ import LogoSeal from './LogoSeal'
 
 export default function Footer() {
   return (
-    <footer className="footer-pattern-bg pt-12 px-7 border-t-[3px] border-[#8A6F52] text-[#ccc]" aria-label="فٹر">
+    <footer className="footer-pattern-bg pt-12 px-4 md:px-7 border-t-[3px] border-[#8A6F52] text-[#ccc]" aria-label="فٹر">
       <div className="max-w-[1440px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-11 pb-10 border-b border-white/[0.08]">
 
         {/* Col 1 — Brand + contact */}
