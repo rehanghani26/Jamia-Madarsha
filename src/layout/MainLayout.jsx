@@ -1,36 +1,28 @@
-import React, { useEffect } from 'react'
-import { Outlet } from 'react-router-dom'
-import TopBar from '../components/TopBar'
-import Header from '../components/Header'
-import Footer from '../components/Footer'
+import React, { useEffect } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 export default function MainLayout() {
-  // Back-to-top button logic
+  const { pathname } = useLocation();
+
+  // Scroll to top automatically when navigation path changes
   useEffect(() => {
-    const btn = document.getElementById('back-top')
-    const onScroll = () => btn?.classList.toggle('show', window.scrollY > 320)
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return (
-    <div className="min-h-screen bg-[#EFEFEF] flex flex-col">
-      <TopBar />
-      <Header />
+    <div className="flex flex-col min-h-screen bg-[#FAF9F5] dark:bg-slate-900">
+      {/* Premium header navigation */}
+      <Navbar />
+
+      {/* Main page content area */}
       <main className="flex-grow">
         <Outlet />
       </main>
-      <Footer />
 
-      {/* Back to top */}
-      <button
-        id="back-top"
-        aria-label="اوپر جائیں"
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="fixed bottom-5 left-5 w-[46px] h-[46px] bg-[#8A6F52] text-white flex items-center justify-center text-[20px] z-[500] hover:bg-[#2F241C] transition-colors rounded-full shadow-lg"
-      >
-        ⌃
-      </button>
+      {/* Footer information */}
+      <Footer />
     </div>
-  )
+  );
 }

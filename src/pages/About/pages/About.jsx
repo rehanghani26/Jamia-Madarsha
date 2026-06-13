@@ -1,0 +1,189 @@
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Award, BookOpen, GraduationCap, Briefcase, Bookmark, Milestone } from 'lucide-react';
+import { fetchSettings } from '../../../store/slices/settingsSlice';
+
+export default function About() {
+  const dispatch = useDispatch();
+  const { settings, loading } = useSelector((state) => state.settings);
+
+  useEffect(() => {
+    if (!settings) {
+      dispatch(fetchSettings());
+    }
+  }, [dispatch, settings]);
+
+  if (loading && !settings) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#FAF9F5]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0A4D27]"></div>
+      </div>
+    );
+  }
+
+  // Fallback defaults
+  const scholar = settings?.scholarInfo || {};
+  const fullName = scholar.fullName || 'Dr. Islamic Scholar';
+  const title = scholar.title || 'Mufti & Educator';
+  const bio = scholar.bio || 'Sharing authentic Islamic guidance.';
+  const education = scholar.education || { madrasah: 'N/A', university: 'N/A' };
+  const qualifications = scholar.qualifications || [];
+  const expertise = scholar.areasOfExpertise || [];
+  const teachingExp = scholar.teachingExperience || '';
+  const researchInterests = scholar.researchInterests || [];
+  const institutions = scholar.institutionsAssociatedWith || [];
+  const achievements = scholar.achievements || [];
+
+  return (
+    <div className="bg-[#FAF9F5] dark:bg-slate-900 py-12 transition-colors duration-200 min-h-screen">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        
+        {/* Biography Header */}
+        <div className="premium-card p-8 mb-8 relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-1.5 scholar-gradient-bg"></div>
+          <div className="flex flex-col md:flex-row items-center gap-6">
+            <div className="w-24 h-24 rounded-full bg-[#0A4D27] dark:bg-emerald-900 flex items-center justify-center shadow-md shrink-0">
+              <BookOpen className="w-12 h-12 text-[#D4AF37] dark:text-[#EAD075]" />
+            </div>
+            <div className="text-center md:text-left">
+              <span className="text-xs font-bold text-[#C5A85C] uppercase tracking-widest font-serif block mb-1">Scholar Profile</span>
+              <h1 className="text-3xl font-extrabold text-[#0A4D27] dark:text-emerald-400 font-serif leading-none tracking-wide">{fullName}</h1>
+              <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mt-2 font-serif">{title}</p>
+            </div>
+          </div>
+          <div className="mt-8 border-t border-slate-100 dark:border-slate-700 pt-6">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-3 font-serif">Biography</h2>
+            <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed font-light whitespace-pre-line">{bio}</p>
+          </div>
+        </div>
+
+        {/* Modular Grid Information Sections */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          
+          {/* Qualifications & Education */}
+          <div className="premium-card p-6">
+            <h2 className="text-md font-bold text-[#0A4D27] dark:text-emerald-400 font-serif flex items-center gap-2 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">
+              <GraduationCap className="w-5 h-5 text-[#C5A85C]" />
+              Education & Credentials
+            </h2>
+            <div className="space-y-4">
+              {education.madrasah && (
+                <div>
+                  <span className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase">Madrasah Education</span>
+                  <span className="text-sm text-slate-700 dark:text-slate-300 font-light">{education.madrasah}</span>
+                </div>
+              )}
+              {education.university && (
+                <div>
+                  <span className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase">University Education</span>
+                  <span className="text-sm text-slate-700 dark:text-slate-300 font-light">{education.university}</span>
+                </div>
+              )}
+              {qualifications.length > 0 && (
+                <div>
+                  <span className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase mb-2">Qualifications</span>
+                  <ul className="space-y-1.5 text-sm text-slate-700 dark:text-slate-300 font-light">
+                    {qualifications.map((q, idx) => (
+                      <li key={idx} className="flex items-center gap-1.5">
+                        <span className="text-[#C5A85C] text-md leading-none">•</span> {q}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Areas of Expertise */}
+          <div className="premium-card p-6">
+            <h2 className="text-md font-bold text-[#0A4D27] dark:text-emerald-400 font-serif flex items-center gap-2 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">
+              <Award className="w-5 h-5 text-[#C5A85C]" />
+              Areas of Expertise
+            </h2>
+            {expertise.length > 0 ? (
+              <div className="flex flex-wrap gap-2 pt-1">
+                {expertise.map((e, idx) => (
+                  <span key={idx} className="bg-emerald-50 dark:bg-emerald-950/35 text-[#0A4D27] dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/60 text-xs font-semibold px-3 py-1.5 rounded-full">
+                    {e}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="text-slate-400 dark:text-slate-500 italic text-xs">No specific expertise fields configured.</p>
+            )}
+          </div>
+
+        </div>
+
+        {/* Experience & Associated Institutions */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          
+          {/* Experience */}
+          <div className="premium-card p-6">
+            <h2 className="text-md font-bold text-[#0A4D27] dark:text-emerald-400 font-serif flex items-center gap-2 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">
+              <Briefcase className="w-5 h-5 text-[#C5A85C]" />
+              Experience & Achievements
+            </h2>
+            <div className="space-y-4">
+              {teachingExp && (
+                <div>
+                  <span className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase">Teaching Experience</span>
+                  <p className="text-sm text-slate-600 dark:text-slate-300 font-light mt-1 leading-relaxed">{teachingExp}</p>
+                </div>
+              )}
+              {achievements.length > 0 && (
+                <div>
+                  <span className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase mb-2">Key Achievements</span>
+                  <ul className="space-y-1.5 text-sm text-slate-700 dark:text-slate-300 font-light">
+                    {achievements.map((a, idx) => (
+                      <li key={idx} className="flex items-start gap-1.5">
+                        <span className="text-[#C5A85C] text-md leading-none mt-0.5">•</span>
+                        <span>{a}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Research & Associations */}
+          <div className="premium-card p-6">
+            <h2 className="text-md font-bold text-[#0A4D27] dark:text-emerald-400 font-serif flex items-center gap-2 mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">
+              <Milestone className="w-5 h-5 text-[#C5A85C]" />
+              Research & Affiliations
+            </h2>
+            <div className="space-y-4">
+              {researchInterests.length > 0 && (
+                <div>
+                  <span className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase mb-2">Research Interests</span>
+                  <ul className="space-y-1.5 text-sm text-slate-700 dark:text-slate-300 font-light">
+                    {researchInterests.map((r, idx) => (
+                      <li key={idx} className="flex items-center gap-1.5">
+                        <span className="text-[#C5A85C] text-md leading-none">•</span> {r}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {institutions.length > 0 && (
+                <div>
+                  <span className="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase mb-2">Associated Institutions</span>
+                  <ul className="space-y-1.5 text-sm text-slate-700 dark:text-slate-300 font-light">
+                    {institutions.map((i, idx) => (
+                      <li key={idx} className="flex items-center gap-1.5">
+                        <span className="text-[#C5A85C] text-md leading-none">•</span> {i}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  );
+}

@@ -1,132 +1,245 @@
-import React, { useState } from 'react'
-import PageContainer from '../../../components/PageContainer'
-import { CONTACT } from '../../../data/siteData'
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Mail, Phone, MapPin, Send, MessageSquareCode, CheckCircle2, AlertTriangle, Facebook, Youtube, Twitter, Instagram } from 'lucide-react';
+import { submitContact, clearContentErrors } from '../../../store/slices/contentSlice';
 
 export default function ContactPage() {
-  const [formState, setFormState] = useState({ name: '', email: '', subject: '', message: '' })
-  const [submitted, setSubmitted] = useState(false)
+  const dispatch = useDispatch();
+  const { actionLoading, actionError } = useSelector((state) => state.content);
+  const { settings } = useSelector((state) => state.settings);
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (!formState.name || !formState.message) {
-      alert('براہ کرم اپنا نام اور پیغام درج کریں۔')
-      return
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: '',
+  });
+
+  const [success, setSuccess] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    dispatch(clearContentErrors());
+
+    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+      return;
     }
-    setSubmitted(true)
-    setTimeout(() => {
-      setSubmitted(false)
-      setFormState({ name: '', email: '', subject: '', message: '' })
-      alert('آپ کا پیغام موصول ہو گیا ہے۔ جزاک اللہ!')
-    }, 1000)
-  }
+
+    const result = await dispatch(submitContact(formData));
+    if (submitContact.fulfilled.match(result)) {
+      setSuccess(true);
+      setSuccessMsg(result.payload.message || 'Your message has been logged successfully.');
+      setFormData({
+        name: '',
+        email: '',
+        subject: '',
+        message: '',
+      });
+    }
+  };
+
+  // Contacts fallback defaults
+  const address = settings?.contactInfo?.address || '100 Minaret Road, Knowledge District, Islamic Center';
+  const phone = settings?.contactInfo?.phone || '+1 (800) 555-ISLAM';
+  const whatsapp = settings?.contactInfo?.whatsapp || '+1 (800) 555-WHATS';
+  const email = settings?.contactInfo?.email || 'scholar@islamicknowledge.com';
+  const socialLinks = settings?.socialLinks || {};
 
   return (
-    <PageContainer
-      title="رابطہ فارم اور معلومات"
-      subtitle="جامعہ العلوم الاسلامیہ علامہ بنوری ٹاؤن گیا کے پتے اور روابط کی تفصیل"
-    >
-      <div className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          
-          {/* Contact Details */}
-          <div className="space-y-6">
-            <h3 className="text-[22px] font-bold text-[#3A2C23] border-b pb-2">رابطہ کی تفصیلات</h3>
-            <div className="space-y-4 text-[17px]">
-              <div className="flex gap-3">
-                <span className="text-[20px]">📍</span>
-                <div>
-                  <strong>پتہ:</strong>
-                  <p className="text-[#555] mt-1">شاہراہِ بنوری، بنوری ٹاؤن، جمشید کوارٹرز، گیا، بہار، انڈیا۔</p>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <span className="text-[20px]">✉️</span>
-                <div>
-                  <strong>ڈاک کا پتہ:</strong>
-                  <p className="text-[#555] font-sans mt-1">{CONTACT.poBox}</p>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <span className="text-[20px]">📞</span>
-                <div>
-                  <strong>فون نمبر:</strong>
-                  <p className="text-[#555] font-sans mt-1">{CONTACT.phone1} <br/> {CONTACT.phone2}</p>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <span className="text-[20px]">📧</span>
-                <div>
-                  <strong>ای میل پتہ:</strong>
-                  <p className="text-[#555] font-sans mt-1">{CONTACT.email}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Map Placeholder */}
-            <div className="bg-gray-100 border border-[#D9D9D9] h-[220px] flex items-center justify-center rounded-sm overflow-hidden relative group">
-              <div className="absolute inset-0 bg-[#3D2E1E] opacity-5 group-hover:opacity-10 transition-opacity"></div>
-              <div className="text-center p-4 z-10">
-                <span className="text-[32px] block mb-2">🗺️</span>
-                <span className="font-bold text-[#3A2C23]">گوگل نقشہ (گوگل میپ)</span>
-                <p className="text-[13px] text-[#8A6F52] mt-1">شاہراہِ بنوری، بنوری ٹاؤن، گیا</p>
-              </div>
-            </div>
+    <div className="bg-[#FAF9F5] dark:bg-slate-900 py-12 min-h-screen">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-10">
+        
+        {/* Left Side: Contact Information Cards (5 columns) */}
+        <div className="lg:col-span-5 space-y-6">
+          <div>
+            <span className="text-xs font-bold text-[#C5A85C] dark:text-amber-500 uppercase tracking-widest block mb-1 font-serif">Get In Touch</span>
+            <h1 className="text-3xl font-extrabold text-[#0A4D27] dark:text-emerald-450 font-serif tracking-wide">Contact Details</h1>
+            <p className="text-slate-500 dark:text-slate-400 text-sm font-light mt-2 leading-relaxed">
+              If you have inquiries regarding fatwas, books, invitations, or lectures, reach out through the official contact portal.
+            </p>
           </div>
 
-          {/* Contact Form */}
-          <div className="bg-[#fcfbf9] border border-[#EAE3CF] p-6 rounded-sm space-y-4">
-            <h3 className="text-[22px] font-bold text-[#8A6F52] border-b pb-2">پیغام بھیجیں</h3>
-            <form onSubmit={handleSubmit} className="space-y-4 text-[16px]">
-              <div>
-                <label className="block font-bold text-[#3A2C23] mb-1">آپ کا نام: <span className="text-red-500">*</span></label>
-                <input
-                  type="text"
-                  required
-                  value={formState.name}
-                  onChange={(e) => setFormState({ ...formState, name: e.target.value })}
-                  className="w-full border border-[#ccc] p-2 bg-white text-[#3A2C23] outline-none focus:border-[#8A6F52]"
-                />
+          <div className="premium-card p-6 space-y-6">
+            
+            {/* Address */}
+            <div className="flex gap-4 items-start">
+              <div className="p-2.5 rounded bg-emerald-50 dark:bg-emerald-950/20 text-[#0A4D27] dark:text-emerald-450 border border-emerald-100 dark:border-emerald-900/60 shrink-0">
+                <MapPin className="w-5 h-5" />
               </div>
               <div>
-                <label className="block font-bold text-[#3A2C23] mb-1">ای میل پتہ:</label>
-                <input
-                  type="email"
-                  value={formState.email}
-                  onChange={(e) => setFormState({ ...formState, email: e.target.value })}
-                  className="w-full border border-[#ccc] p-2 bg-white text-[#3A2C23] font-sans outline-none focus:border-[#8A6F52]"
-                />
+                <span className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Office Address</span>
+                <p className="text-slate-700 dark:text-slate-350 text-sm mt-1 leading-relaxed font-light">{address}</p>
+              </div>
+            </div>
+
+            {/* Phone */}
+            <div className="flex gap-4 items-start">
+              <div className="p-2.5 rounded bg-emerald-50 dark:bg-emerald-950/20 text-[#0A4D27] dark:text-emerald-450 border border-emerald-100 dark:border-emerald-900/60 shrink-0">
+                <Phone className="w-5 h-5" />
               </div>
               <div>
-                <label className="block font-bold text-[#3A2C23] mb-1">موضوع:</label>
-                <input
-                  type="text"
-                  value={formState.subject}
-                  onChange={(e) => setFormState({ ...formState, subject: e.target.value })}
-                  className="w-full border border-[#ccc] p-2 bg-white text-[#3A2C23] outline-none focus:border-[#8A6F52]"
-                />
+                <span className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Phone Numbers</span>
+                <p className="text-slate-700 dark:text-slate-350 text-sm mt-1 font-light">Office: {phone}</p>
+                {whatsapp && <p className="text-emerald-700 dark:text-emerald-400 text-xs font-semibold mt-1">WhatsApp Quick Link: {whatsapp}</p>}
+              </div>
+            </div>
+
+            {/* Email */}
+            <div className="flex gap-4 items-start">
+              <div className="p-2.5 rounded bg-emerald-50 dark:bg-emerald-950/20 text-[#0A4D27] dark:text-emerald-450 border border-emerald-100 dark:border-emerald-900/60 shrink-0">
+                <Mail className="w-5 h-5" />
               </div>
               <div>
-                <label className="block font-bold text-[#3A2C23] mb-1">پیغام: <span className="text-red-500">*</span></label>
-                <textarea
-                  required
-                  rows="4"
-                  value={formState.message}
-                  onChange={(e) => setFormState({ ...formState, message: e.target.value })}
-                  className="w-full border border-[#ccc] p-2 bg-white text-[#3A2C23] outline-none focus:border-[#8A6F52] resize-none"
-                ></textarea>
+                <span className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase">Email Address</span>
+                <p className="text-slate-700 dark:text-slate-350 text-sm mt-1 font-light">{email}</p>
               </div>
-              <button
-                type="submit"
-                disabled={submitted}
-                className="w-full bg-[#8A6F52] text-white py-2.5 font-bold hover:bg-[#2F241C] transition-colors rounded shadow-sm disabled:bg-gray-400"
-              >
-                {submitted ? 'ارسال ہو رہا ہے...' : 'ارسال کریں ✉️'}
-              </button>
-            </form>
+            </div>
+
+          </div>
+
+          {/* Social icons */}
+          <div className="bg-[#0A4D27] islamic-pattern text-white p-6 rounded-lg border border-[#D4AF37]/35 relative overflow-hidden shadow-sm">
+            <h3 className="font-bold text-md mb-3 font-serif">Connect on Social Channels</h3>
+            <p className="text-xs text-emerald-200/80 mb-4 font-light">Follow the scholar for regular video reminders and quote updates.</p>
+            <div className="flex items-center gap-2.5 relative z-10">
+              {socialLinks.facebook && (
+                <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="p-2.5 rounded bg-emerald-950 text-[#D4AF37] hover:bg-emerald-900 border border-emerald-900/60 transition-colors">
+                  <Facebook className="w-4 h-4" />
+                </a>
+              )}
+              {socialLinks.youtube && (
+                <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="p-2.5 rounded bg-emerald-950 text-[#D4AF37] hover:bg-emerald-900 border border-emerald-900/60 transition-colors">
+                  <Youtube className="w-4 h-4" />
+                </a>
+              )}
+              {socialLinks.twitter && (
+                <a href={socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="p-2.5 rounded bg-emerald-950 text-[#D4AF37] hover:bg-emerald-900 border border-emerald-900/60 transition-colors">
+                  <Twitter className="w-4 h-4" />
+                </a>
+              )}
+              {socialLinks.instagram && (
+                <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="p-2.5 rounded bg-emerald-950 text-[#D4AF37] hover:bg-emerald-900 border border-emerald-900/60 transition-colors">
+                  <Instagram className="w-4 h-4" />
+                </a>
+              )}
+            </div>
           </div>
 
         </div>
+
+        {/* Right Side: Message Submission Form (7 columns) */}
+        <div className="lg:col-span-7">
+          {success ? (
+            <div className="premium-card p-10 shadow-sm text-center flex flex-col items-center justify-center min-h-[400px]">
+              <CheckCircle2 className="w-16 h-16 text-emerald-600 dark:text-emerald-400 mb-4" />
+              <h2 className="text-2xl font-bold text-[#0A4D27] dark:text-emerald-450 font-serif mb-3">Message Logged</h2>
+              <p className="text-slate-700 dark:text-slate-400 text-sm leading-relaxed max-w-sm font-light mb-6">
+                {successMsg} Our admin office will review it and reply as soon as possible.
+              </p>
+              <button
+                onClick={() => setSuccess(false)}
+                className="px-5 py-2.5 bg-[#0A4D27] text-white text-xs font-bold rounded uppercase tracking-wider font-serif hover:bg-emerald-950 transition-colors"
+              >
+                Send Another Message
+              </button>
+            </div>
+          ) : (
+            <div className="premium-card shadow-sm p-6 sm:p-8">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white font-serif mb-6 border-b border-slate-100 dark:border-slate-750 pb-3 flex items-center gap-2">
+                <MessageSquareCode className="w-5 h-5 text-[#C5A85C] dark:text-amber-500" />
+                Send a Message
+              </h2>
+
+              <form onSubmit={handleFormSubmit} className="space-y-4">
+                
+                {/* Alert error */}
+                {actionError && (
+                  <div className="bg-red-50 dark:bg-red-950/20 border-l-4 border-red-500 p-4 flex items-start gap-2 text-red-700 dark:text-red-400 text-xs shrink-0">
+                    <AlertTriangle className="w-4.5 h-4.5 shrink-0" />
+                    <span>{actionError}</span>
+                  </div>
+                )}
+
+                {/* Name & Email */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-1">Your Name *</label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      required
+                      placeholder="e.g. Abdullah"
+                      className="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-[#EAE3CF] dark:border-slate-700 text-slate-800 dark:text-white rounded outline-none focus:border-[#0A4D27] dark:focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-900 transition-all placeholder:text-slate-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-1">Your Email Address *</label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                      placeholder="abdullah@example.com"
+                      className="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-[#EAE3CF] dark:border-slate-700 text-slate-800 dark:text-white rounded outline-none focus:border-[#0A4D27] dark:focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-900 transition-all placeholder:text-slate-400"
+                    />
+                  </div>
+                </div>
+
+                {/* Subject */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-1">Subject *</label>
+                  <input
+                    type="text"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="e.g. Invitation to Seminar / Fiqh Question"
+                    className="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-[#EAE3CF] dark:border-slate-700 text-slate-800 dark:text-white rounded outline-none focus:border-[#0A4D27] dark:focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-900 transition-all placeholder:text-slate-400"
+                  />
+                </div>
+
+                {/* Message */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase mb-1">Your Message *</label>
+                  <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="Write your message here..."
+                    rows={6}
+                    className="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-900 border border-[#EAE3CF] dark:border-slate-700 text-slate-800 dark:text-white rounded outline-none focus:border-[#0A4D27] dark:focus:border-emerald-500 focus:bg-white dark:focus:bg-slate-900 transition-all resize-y placeholder:text-slate-400"
+                  ></textarea>
+                </div>
+
+                {/* Submit button */}
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={actionLoading}
+                    className="w-full flex items-center justify-center gap-2 py-3 bg-[#0A4D27] hover:bg-emerald-950 dark:bg-[#0A4D27] dark:hover:bg-emerald-950 text-white font-bold rounded shadow-sm transition-all uppercase tracking-wider font-serif text-sm disabled:opacity-50"
+                  >
+                    <Send className="w-4 h-4 text-[#D4AF37]" />
+                    {actionLoading ? 'Sending message...' : 'Send Message'}
+                  </button>
+                </div>
+
+              </form>
+            </div>
+          )}
+        </div>
+
       </div>
-    </PageContainer>
-  )
+    </div>
+  );
 }
